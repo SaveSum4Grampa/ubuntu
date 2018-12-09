@@ -1,0 +1,48 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+    - name: apt-key add
+      apt_key:
+        url: "{{ item.url }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "present", url: "https://atlassian.artifactoryonline.com/atlassian/api/gpg/key/public" }
+
+    - name: apt-add-repository
+      apt_repository:
+        repo: "{{ item.repo }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "absent", repo: "deb https://atlassian.artifactoryonline.com/atlassian/hipchat-apt-client zesty main" }
+        - { state: "absent", repo: "deb https://atlassian.artifactoryonline.com/atlassian/hipchat-apt-client bionic main" }
+        - { state: "present", repo: "deb https://atlassian.artifactoryonline.com/atlassian/hipchat-apt-client artful main" }
+
+    - name: apt install
+      apt:
+        name: "{{ item.name }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "latest", name: "hipchat4" }
+        - { state: "latest", name: "libssl1.0.0" }
+
+    - name: fix libssl.so and libcrypto.so
+      file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "root"
+        group: "root"
+        state: "link"
+        force: "yes"
+      with_items:
+        - { src: "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0", dest: "/opt/HipChat4/lib/libcrypto.so.1.0.0" }
+        - { src: "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.0", dest: "/opt/HipChat4/lib/libssl.so.1.0.0" }
+        - { src: "libcrypto.so.1.0.0", dest: "/opt/HipChat4/lib/libcrypto.so" }
+        - { src: "libssl.so.1.0.0", dest: "/opt/HipChat4/lib/libssl.so" }
+
+    - name: fix with --disable-seccomp-filter-sandbox
+      replace:
+        path: "/opt/HipChat4/bin/QtWebEngineProcess"
+        regexp: '^(exec -a "\$0" \$commandtorun "\$hipchatRoot/lib/QtWebEngineProcess.bin"  \$arguments)$'
+        replace: '\1 --disable-seccomp-filter-sandbox'

@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+    - name: apt-add-repository
+      apt_repository:
+        repo: "{{ item.repo }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "present", repo: "ppa:mozillateam/firefox-next" }
+
+    - name: apt install
+      apt:
+        name: "{{ item.name }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "latest", name: "firefox" }
+        - { state: "latest", name: "firefox-locale-en" }
+        - { state: "latest", name: "firefox-locale-ja" }
+        - { state: "latest", name: "firefox-locale-ko" }
+        - { state: "latest", name: "firefox-locale-zh-hans" }
+        - { state: "latest", name: "firefox-locale-zh-hant" }

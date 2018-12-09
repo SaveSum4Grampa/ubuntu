@@ -1,0 +1,21 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+    - name: apt-add-repository
+      apt_repository:
+        repo: "{{ item.repo }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "absent", repo: "ppa:fingerprint/fprint" }
+
+    - name: apt install
+      apt:
+        name: "{{ item.name }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "latest", name: "fprint-demo" }
+        - { state: "latest", name: "fprintd" }
+        - { state: "latest", name: "libfprint0" }
+        - { state: "latest", name: "libpam-fprintd" }

@@ -1,0 +1,36 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+    - name: apt install
+      apt:
+        name: "{{ item.name }}"
+        state: "{{ item.state }}"
+      with_items:
+        - { state: "latest", name: "gnome-getting-started-docs-ja" }
+        - { state: "latest", name: "gnome-getting-started-docs-ko" }
+        - { state: "latest", name: "gnome-getting-started-docs-zh-hk" }
+        - { state: "latest", name: "gnome-getting-started-docs-zh-tw" }
+        - { state: "latest", name: "gnome-user-docs-ja" }
+        - { state: "latest", name: "gnome-user-docs-zh-hans" }
+        - { state: "latest", name: "hunspell-en-au" }
+        - { state: "latest", name: "hunspell-en-ca" }
+        - { state: "latest", name: "hunspell-en-gb" }
+        - { state: "latest", name: "hunspell-en-us" }
+        - { state: "latest", name: "hunspell-en-za" }
+        - { state: "latest", name: "hunspell-ko" }
+        - { state: "latest", name: "hyphen-en-ca" }
+        - { state: "latest", name: "hyphen-en-gb" }
+        - { state: "latest", name: "language-pack-en" }
+        - { state: "latest", name: "language-pack-gnome-en" }
+        - { state: "latest", name: "language-pack-gnome-ja" }
+        - { state: "latest", name: "language-pack-gnome-ko" }
+        - { state: "latest", name: "language-pack-gnome-zh-hans" }
+        - { state: "latest", name: "language-pack-gnome-zh-hant" }
+        - { state: "latest", name: "language-pack-ja" }
+        - { state: "latest", name: "language-pack-ko" }
+        - { state: "latest", name: "language-pack-zh-hans" }
+        - { state: "latest", name: "language-pack-zh-hant" }
+        - { state: "latest", name: "mythes-en-au" }
+        - { state: "latest", name: "mythes-en-us" }
